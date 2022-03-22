@@ -243,7 +243,7 @@ def main():
                 sg.Button('Update Data'),
             ], 
             [
-                sg.Text('', key='-UPDATEDATA-', size=(30,1),visible=True, justification='c', background_color="#ffe90a"),   
+                sg.Text('', key='-UPDATEDATA-', size=(30,1),visible=True, justification='c', background_color="#ffe90a", text_color='black'),   
             ]
         ],
         [
@@ -261,9 +261,6 @@ def main():
             sg.Button('Random', key='-RANDOMBUTTON-', visible= True, size=(20, 2), button_color='#9907fe'), 
             sg.Button('Stop', key='-STOPRANDOMBUTTON-', visible= False, size=(20, 2), button_color='#fe00ff'),
             sg.Button('OK', key='-RESULTOKBUTTON-', visible= False, size=(20, 2), button_color='#2583ff'),
-        ],
-        [
-            # sg.Listbox(groupNumberList,  size=(20, 5),select_mode='LISTBOX_SELECT_MODE_BROWSE', background_color=None,highlight_background_color=None, highlight_text_color=None, horizontal_scroll=False,no_scrollbar=True,enable_events=False,  visible=True, expand_x=True)
         ],
         [
             sg.Stretch(background_color="#ffe90a"),
