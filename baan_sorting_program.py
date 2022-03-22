@@ -48,13 +48,13 @@ with open(currentDir + "/config.json", 'r', encoding="utf8") as f:
 
 def updateData():
     # loads the text file
-    try:
-        with open(textFileName, 'r') as f:
-            a = json.loads(f.read())
-    except:
-        f = open(textFileName, 'w')
-        f.close()
-        a = []
+    # try:
+    #     with open(textFileName, 'r') as f:
+    #         a = json.loads(f.read())
+    # except:
+    #     f = open(textFileName, 'w')
+    #     f.close()
+    #     a = []
 
 
     # connects database
@@ -95,11 +95,12 @@ def updateData():
             cursor.execute(command)
             db.commit()
             add_count += 1
-            a.append(command + '\n') 
+            # a.append(command + '\n') 
     # with open(textFileName, 'w') as f:
     #     # f.write(json.dumps(a))
     #     for lines in a:
     #         f.write(lines)
+    #     f.close()
     if add_count == 0:
         print('No new records added')
         return 0
