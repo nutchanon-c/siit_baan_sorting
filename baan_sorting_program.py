@@ -239,18 +239,18 @@ def main():
         [
             [
                 [sg.Combo(values=groupNumberList, key='-COMBO-', default_value='Select Group', change_submits=True, readonly=True, size=(20,1))],
-                [sg.Text('Please select a group first', key='-MEMBERLABEL-', font=('Helvetica', 20), visible=True)],
-                [sg.Text('', key='-MEMBERLIST-', font=('Helvetica', 25), size=(25,4), justification='c')],
+                [sg.Text('Please select a group first', key='-MEMBERLABEL-', font=('Arial', 20), visible=True, text_color='#c79fcf')],
+                [sg.Text('', key='-MEMBERLIST-', font=('Arial', 25), size=(25,4), justification='c')],
             ]
         ],
         [
-            sg.Text(text='', key='-RANDOMNUMBER-', font=('Helvetica', 40), background_color=None, size=(5,1), justification='c', text_color='#ffa3fe'),
+            sg.Text(text='', key='-RANDOMNUMBER-', font=('Arial', 40), background_color=None, size=(5,1), justification='c', text_color='#ffa3fe'),
         ],
         [
             
-            sg.Button('Random', key='-RANDOMBUTTON-', visible= True, size=(20, 5), button_color='#38a130'), 
-            sg.Button('Stop', key='-STOPRANDOMBUTTON-', visible= False, size=(20, 5), button_color='#a10000'),
-            sg.Button('OK', key='-RESULTOKBUTTON-', visible= False, size=(20, 5), button_color='#00a6a6'),
+            sg.Button('Random', key='-RANDOMBUTTON-', visible= True, size=(20, 2), button_color='#38a130'), 
+            sg.Button('Stop', key='-STOPRANDOMBUTTON-', visible= False, size=(20, 2), button_color='#a10000'),
+            sg.Button('OK', key='-RESULTOKBUTTON-', visible= False, size=(20, 2), button_color='#00a6a6'),
         ],
         [
             # sg.Listbox(groupNumberList,  size=(20, 5),select_mode='LISTBOX_SELECT_MODE_BROWSE', background_color=None,highlight_background_color=None, highlight_text_color=None, horizontal_scroll=False,no_scrollbar=True,enable_events=False,  visible=True, expand_x=True)
@@ -266,7 +266,7 @@ def main():
         
         
         ]
-    window = sg.Window(title='Baan Sorting', layout=layout, resizable=False,size=(800,600), element_justification='c')
+    window = sg.Window(title='Baan Sorting', layout=layout, resizable=False,size=(800,600), element_justification='c', font=('Arial', 11), icon=currentDir + '/icon.ico',titlebar_icon=currentDir + '/icon.ico')
     # cnt = 0
     # a = 0
     while True:
@@ -305,23 +305,26 @@ def main():
 
             members = getGroupMembers(val)
             member_list_string = '\n'.join(members)
-            print(members)
+            # print(members)
             window['-MEMBERLABEL-'].update(f'Group {val} members:')
             window['-MEMBERLIST-'].update(member_list_string)
         if event == '-RANDOMBUTTON-' and selected:
             r = True
             window['-RANDOMBUTTON-'].update(visible=False)
             window['-STOPRANDOMBUTTON-'].update(visible = True)
+            window['-COMBO-'].update(disabled=True)
         if event == '-STOPRANDOMBUTTON-':
             window['-STOPRANDOMBUTTON-'].update(visible = False)
             window['-RANDOMBUTTON-'].update(visible=False)
             window['-RESULTOKBUTTON-'].update(visible=True)
+            
             insertToSorted(selected_group, num)
 
             selected = False
             r = False
         if event == '-RESULTOKBUTTON-':
             resetWindow()
+            window['-COMBO-'].update(disabled=False)
             selected = False
             r = False
         if r:
