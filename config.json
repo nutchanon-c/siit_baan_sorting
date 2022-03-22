@@ -3,8 +3,8 @@
     "dbHostName" : "localhost",
     "dbUserName" : "root",
     "dbPassword" : "",
-    "dbName" : "baan_sort",
-    "textFileName" : "test1.txt",
+    "dbName" : "siit_baan_sort_2022",
+    "textFileName" : "query_log.txt",
     "worksheetName" : "รายชื่อกลุ่มน้องกิจกรรมเอสไอไทบ้าน",
     "sheetName" : "Sheet1",
     "serviceAccount" : "service_account.json"

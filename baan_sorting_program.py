@@ -95,8 +95,11 @@ def updateData():
             cursor.execute(command)
             db.commit()
             add_count += 1
-    with open(textFileName, 'w') as f:
-        f.write(json.dumps(a))
+            a.append(command + '\n') 
+    # with open(textFileName, 'w') as f:
+    #     # f.write(json.dumps(a))
+    #     for lines in a:
+    #         f.write(lines)
     if add_count == 0:
         print('No new records added')
         return 0

@@ -1,2 +1,3 @@
 # ignore service_account.json
 /service_account.json
+/query_log.txt
