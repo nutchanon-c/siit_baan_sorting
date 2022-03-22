@@ -1,0 +1,2 @@
+// command get groups that haven't been sorted 
+select s.* from student s where s.groupNo not in(select groupNo from sorted_table)

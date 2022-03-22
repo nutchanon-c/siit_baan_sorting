@@ -1,0 +1,12 @@
+   
+{
+    "dbHostName" : "localhost",
+    "dbUserName" : "root",
+    "dbPassword" : "",
+    "dbName" : "baan_sort",
+    "textFileName" : "test1.txt",
+    "worksheetName" : "รายชื่อกลุ่มน้องกิจกรรมเอสไอไทบ้าน",
+    "sheetName" : "Sheet1",
+    "serviceAccount" : "service_account.json"
+
+}

@@ -1,0 +1,268 @@
+
+import gspread
+import json
+import pymysql
+import os
+import PySimpleGUI as sg
+import random
+
+# from tkinter import font
+# import tkinter
+# root = tkinter.Tk()
+# fonts = list(font.families())
+# fonts.sort()
+# root.destroy()
+
+
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+currentDir = dir_path.replace('\\', '/')
+
+# read an extract data from config.json
+with open(currentDir + "/config.json", 'r', encoding="utf8") as f:
+    data = json.loads(f.read())
+    dbHostName = data['dbHostName']
+    dbUserName = data['dbUserName']
+    dbPassword = data['dbPassword']
+    dbName = data['dbName']
+    worksheetName = data['worksheetName']
+    sheetName = data['sheetName']
+    textFileName = data['textFileName']
+    serviceAccountFile = data['serviceAccount']
+
+# textFileName = 'test1.txt'
+# worksheetName = 'รายชื่อกลุ่มน้องกิจกรรมเอสไอไทบ้าน'
+# sheetName = 'Sheet1'
+
+# dbHostName = 'localhost'
+# dbUserName = 'root'
+# dbPassword = ''
+# dbName = 'baan_sort'
+    
+
+
+def updateData():
+    # loads the text file
+    try:
+        with open(textFileName, 'r') as f:
+            a = json.loads(f.read())
+    except:
+        f = open(textFileName, 'w')
+        f.close()
+        a = []
+
+
+    # connects database
+    db = pymysql.connect(host=dbHostName,
+                            user=dbUserName,
+                            password=dbPassword,
+                            db=dbName,
+                            charset='utf8mb4',
+                            cursorclass=pymysql.cursors.DictCursor)
+    cursor = db.cursor()
+    # fetching data
+    cursor.execute("SELECT * FROM student")
+    result = cursor.fetchall()
+    x = [list(i.values()) for i in result] # convert to from {} to list
+
+    x_cut = [r[1:] for r in x] # removing the id which is PK
+
+
+
+    sa = gspread.service_account(filename= currentDir + "/" + serviceAccountFile)
+    sh = sa.open(worksheetName)
+
+    wks = sh.worksheet(sheetName)
+    # print('Rows: ', wks.row_count)
+    # print('Col: ', wks.col_count)
+
+    g = wks.get_all_values()
+    g = g[1:]
+    for record in g:
+        record[0] = int(record[0])
+
+
+    add_count = 0
+    for record in g:
+        if record not in x_cut:
+            s = ','.join(["'" + str(x) + "'" for x in record])
+            command = "INSERT INTO student (groupNo, fullName, nickName, sex, line_id, phone, bloodType, foodAllergies, dietRestrictions, drugAllergies, otherAllergies, congenitalDiseases, emergency) VALUES(" + s + ")" 
+            cursor.execute(command)
+            db.commit()
+            add_count += 1
+    with open(textFileName, 'w') as f:
+        f.write(json.dumps(a))
+    if add_count == 0:
+        print('No new records added')
+        return 0
+    else:
+        print(f'Added {add_count} new records')
+        return add_count
+
+def getGroupNumbers():
+    # connects database
+    db = pymysql.connect(host=dbHostName,
+                            user=dbUserName,
+                            password=dbPassword,
+                            db=dbName,
+                            charset='utf8mb4',
+                            cursorclass=pymysql.cursors.DictCursor)
+    cursor = db.cursor()
+    # command = "SELECT DISTINCT groupNo FROM student"
+    command = "select distinct s.groupNo from student s where s.groupNo not in(select groupNo from sorted_table)"
+    cursor.execute(command)
+    result = cursor.fetchall()
+    return [x['groupNo'] for x in result]
+
+def getGroupMembers(group):
+    db = pymysql.connect(host=dbHostName,
+                            user=dbUserName,
+                            password=dbPassword,
+                            db=dbName,
+                            charset='utf8mb4',
+                            cursorclass=pymysql.cursors.DictCursor)
+    cursor = db.cursor()
+    command = "SELECT fullName from student WHERE groupNo = " + str(group)
+    
+    cursor.execute(command)
+    result = cursor.fetchall()
+    return [x['fullName'] for x in result]
+
+
+def insertToSorted(groupNo, baanNo):
+    db = pymysql.connect(host=dbHostName,
+                            user=dbUserName,
+                            password=dbPassword,
+                            db=dbName,
+                            charset='utf8mb4',
+                            cursorclass=pymysql.cursors.DictCursor)
+    cursor = db.cursor()
+    command = "INSERT INTO sorted_table (groupNo, baan) VALUES(" + str(groupNo) + "," + str(baanNo) + ")"
+    cursor.execute(command)
+    db.commit()
+
+
+def main():
+    def resetWindow():
+        window['-COMBO-'].update(values=getGroupNumbers())
+        window['-MEMBERLABEL-'].update("Please select a group first")
+        window['-MEMBERLIST-'].update("")
+        window['-RANDOMNUMBER-'].update('')
+        window['-RANDOMBUTTON-'].update(visible=True)
+        window['-RESULTOKBUTTON-'].update(visible=False)
+        
+    r = False
+    selected = False
+    selected_group = 0
+    try:
+        groupNumberList = getGroupNumbers()
+    except:
+        sg.Popup('Database Error', 'Please check your database connection')
+        exit()        
+    layout = [       
+        [
+            
+            [
+                sg.Button('Update Data'),
+            ], 
+            [
+                sg.Text('', key='-UPDATEDATA-', size=(30,1),visible=True, justification='c'),   
+            ]
+        ],
+        [
+            [
+                [sg.Combo(values=groupNumberList, key='-COMBO-', default_value='Select Group', change_submits=True, readonly=True, size=(20,1))],
+                [sg.Text('Please select a group first', key='-MEMBERLABEL-', font=('Helvetica', 20), visible=True)],
+                [sg.Text('', key='-MEMBERLIST-', font=('Helvetica', 25), size=(25,4), justification='c')],
+            ]
+        ],
+        [
+            sg.Text(text='', key='-RANDOMNUMBER-', font=('Helvetica', 40), background_color=None, size=(5,1), justification='c', text_color='#ffa3fe'),
+        ],
+        [
+            
+            sg.Button('Random', key='-RANDOMBUTTON-', visible= True, size=(20, 5), button_color='#38a130'), 
+            sg.Button('Stop', key='-STOPRANDOMBUTTON-', visible= False, size=(20, 5), button_color='#a10000'),
+            sg.Button('OK', key='-RESULTOKBUTTON-', visible= False, size=(20, 5), button_color='#00a6a6'),
+        ],
+        [
+            # sg.Listbox(groupNumberList,  size=(20, 5),select_mode='LISTBOX_SELECT_MODE_BROWSE', background_color=None,highlight_background_color=None, highlight_text_color=None, horizontal_scroll=False,no_scrollbar=True,enable_events=False,  visible=True, expand_x=True)
+        ],
+        [
+            sg.Stretch(),
+            
+        ],
+        [
+            sg.Text('Made by Nutchanon Charnwutiwong',expand_x=True, justification='r')
+        ]
+
+        
+        
+        ]
+    window = sg.Window(title='Baan Sorting', layout=layout, resizable=False,size=(800,600), element_justification='c')
+    # cnt = 0
+    # a = 0
+    while True:
+        # if r:
+        #     cnt += 1
+        #     if cnt == 10:
+                
+        #         cnt = 0
+        #         a += 1
+        #         print(a)
+        #     if a == 3:
+        #         r = False
+                
+        event, values = window.read(timeout=100)
+        # continuous random number
+        if event == 'Update Data':
+            rec = updateData()
+            if rec == 0:
+                window['-UPDATEDATA-'].update('No new records added')
+            else:
+                window['-UPDATEDATA-'].update(f'{rec} new records added')
+            # sg.Popup('Data updated')
+            groupNumberList = getGroupNumbers()
+            window['-UPDATEDATA-'].update(visible=True)
+            window['-COMBO-'].update(values=groupNumberList)
+            
+
+        if event == sg.WIN_CLOSED:
+            break
+        if event == '-COMBO-':
+            window['-UPDATEDATA-'].update('')
+            val = values['-COMBO-']
+            selected_group = int(val)
+            selected = True
+            print(selected_group)
+
+            members = getGroupMembers(val)
+            member_list_string = '\n'.join(members)
+            print(members)
+            window['-MEMBERLABEL-'].update(f'Group {val} members:')
+            window['-MEMBERLIST-'].update(member_list_string)
+        if event == '-RANDOMBUTTON-' and selected:
+            r = True
+            window['-RANDOMBUTTON-'].update(visible=False)
+            window['-STOPRANDOMBUTTON-'].update(visible = True)
+        if event == '-STOPRANDOMBUTTON-':
+            window['-STOPRANDOMBUTTON-'].update(visible = False)
+            window['-RANDOMBUTTON-'].update(visible=False)
+            window['-RESULTOKBUTTON-'].update(visible=True)
+            insertToSorted(selected_group, num)
+
+            selected = False
+            r = False
+        if event == '-RESULTOKBUTTON-':
+            resetWindow()
+            selected = False
+            r = False
+        if r:
+            num = random.randint(1,11)
+            window['-RANDOMNUMBER-'].update(num)
+            
+
+if __name__ == '__main__':
+    # fonts = sg.Text.fonts_installed_list()
+    # print(fonts)
+    main()
