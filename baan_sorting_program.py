@@ -1,10 +1,15 @@
 
+import re
 import gspread
 import json
 import pymysql
 import os
 import PySimpleGUI as sg
 import random
+
+from pymysql import OperationalError
+from pymysql import ProgrammingError
+from setuptools import Command
 
 # from tkinter import font
 # import tkinter
@@ -141,8 +146,65 @@ def insertToSorted(groupNo, baanNo):
     cursor.execute(command)
     db.commit()
 
+def exec_sql_file(cursor, sql_file):
+    print ("\n[INFO] Executing SQL script file: '%s'" % (sql_file))
+    statement = ""
+
+    for line in open(sql_file):
+        if re.match(r'--', line):  # ignore sql comment lines
+            continue
+        if not re.search(r';$', line):  # keep appending lines that don't end in ';'
+            statement = statement + line
+        else:  # when you get a line ending in ';' then exec statement and reset for next statement
+            statement = statement + line
+            #print "\n\n[DEBUG] Executing SQL statement:\n%s" % (statement)
+            try:
+                cursor.execute(statement)
+            except (OperationalError, ProgrammingError) as e:
+                print ("[WARN] MySQLError during execute statement \n\tArgs: '%s'" % (str(e.args)))
+
+            statement = ""
+def createDB():
+    db = pymysql.connect(host=dbHostName,
+                            user=dbUserName,
+                            password=dbPassword,
+                            charset='utf8mb4',
+                            cursorclass=pymysql.cursors.DictCursor)
+    cursor = db.cursor()
+
+    command = f"CREATE DATABASE IF NOT EXISTS `{dbName}` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;"
+    cursor.execute(command)
+    db.commit()
+    command = f"USE {dbName};"
+    cursor.execute(command)
+    db.commit()
+
+
+
+    exec_sql_file(cursor, currentDir + "/baan_sort.sql")
+
+    db.commit()
+    print('DATABASE CREATED')
+
+
+def checkDatabaseExistence():
+    command = f"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{dbName}';"
+    db = pymysql.connect(host=dbHostName,
+                            user=dbUserName,
+                            password=dbPassword,
+                            charset='utf8mb4',
+                            cursorclass=pymysql.cursors.DictCursor)
+    cursor = db.cursor()
+    cursor.execute(command)
+    result = cursor.fetchall()
+    if len(result) == 0:
+        createDB()
+        
+
+
 
 def main():
+    checkDatabaseExistence()
     def resetWindow():
         window['-COMBO-'].update(values=getGroupNumbers())
         window['-MEMBERLABEL-'].update("Please select a group first")
