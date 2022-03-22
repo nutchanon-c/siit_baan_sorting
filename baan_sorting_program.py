@@ -209,6 +209,12 @@ def checkDatabaseExistence():
 
 
 def main():
+    colors = {
+        "backgroundColor" :"#ffe90a",
+        "labelColor" : "#9907fe",
+        "memberListColor" : "#2583ff"
+    }
+ 
     try:
         checkDatabaseExistence()
     except:
@@ -237,40 +243,40 @@ def main():
                 sg.Button('Update Data'),
             ], 
             [
-                sg.Text('', key='-UPDATEDATA-', size=(30,1),visible=True, justification='c'),   
+                sg.Text('', key='-UPDATEDATA-', size=(30,1),visible=True, justification='c', background_color="#ffe90a"),   
             ]
         ],
         [
             [
                 [sg.Combo(values=groupNumberList, key='-COMBO-', default_value='Select Group', change_submits=True, readonly=True, size=(20,1))],
-                [sg.Text('Please select a group first', key='-MEMBERLABEL-', font=('Arial', 20), visible=True, text_color='#c79fcf')],
-                [sg.Text('', key='-MEMBERLIST-', font=('Arial', 25), size=(25,4), justification='c')],
+                [sg.Text('Please select a group first', key='-MEMBERLABEL-', font=('Arial', 20), visible=True, text_color=colors['labelColor'], background_color=colors['backgroundColor'])],
+                [sg.Text('', key='-MEMBERLIST-', font=('Arial', 25), size=(25,4), justification='c', text_color=colors['memberListColor'], background_color="#ffe90a")],
             ]
         ],
         [
-            sg.Text(text='', key='-RANDOMNUMBER-', font=('Arial', 40), background_color=None, size=(5,1), justification='c', text_color='#ffa3fe'),
+            sg.Text(text='', key='-RANDOMNUMBER-', font=('Arial', 40), background_color=colors['backgroundColor'], size=(5,1), justification='c', text_color='#fe00ff'),
         ],
         [
             
-            sg.Button('Random', key='-RANDOMBUTTON-', visible= True, size=(20, 2), button_color='#38a130'), 
-            sg.Button('Stop', key='-STOPRANDOMBUTTON-', visible= False, size=(20, 2), button_color='#a10000'),
-            sg.Button('OK', key='-RESULTOKBUTTON-', visible= False, size=(20, 2), button_color='#00a6a6'),
+            sg.Button('Random', key='-RANDOMBUTTON-', visible= True, size=(20, 2), button_color='#9907fe'), 
+            sg.Button('Stop', key='-STOPRANDOMBUTTON-', visible= False, size=(20, 2), button_color='#fe00ff'),
+            sg.Button('OK', key='-RESULTOKBUTTON-', visible= False, size=(20, 2), button_color='#2583ff'),
         ],
         [
             # sg.Listbox(groupNumberList,  size=(20, 5),select_mode='LISTBOX_SELECT_MODE_BROWSE', background_color=None,highlight_background_color=None, highlight_text_color=None, horizontal_scroll=False,no_scrollbar=True,enable_events=False,  visible=True, expand_x=True)
         ],
         [
-            sg.Stretch(),
+            sg.Stretch(background_color="#ffe90a"),
             
         ],
         [
-            sg.Text('Made by Nutchanon Charnwutiwong',expand_x=True, justification='r')
+            sg.Text('Made by Nutchanon Charnwutiwong',expand_x=True, justification='r', background_color="#ffe90a",text_color="#000000")
         ]
 
         
         
         ]
-    window = sg.Window(title='Baan Sorting', layout=layout, resizable=False,size=(800,600), element_justification='c', font=('Arial', 11), icon=currentDir + '/icon.ico',titlebar_icon=currentDir + '/icon.ico')
+    window = sg.Window(title='Baan Sorting', layout=layout, resizable=False,size=(800,600), element_justification='c', font=('Arial', 11), icon=currentDir + '/icon.ico',titlebar_icon=currentDir + '/icon.ico', background_color=colors['backgroundColor'])
     # cnt = 0
     # a = 0
     while True:
