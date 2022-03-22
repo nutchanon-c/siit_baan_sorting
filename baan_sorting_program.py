@@ -209,7 +209,11 @@ def checkDatabaseExistence():
 
 
 def main():
-    checkDatabaseExistence()
+    try:
+        checkDatabaseExistence()
+    except:
+        sg.Popup('Database Error', 'Please check your database connection')
+        exit()     
     def resetWindow():
         window['-COMBO-'].update(values=getGroupNumbers())
         window['-MEMBERLABEL-'].update("Please select a group first")
