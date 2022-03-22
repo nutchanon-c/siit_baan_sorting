@@ -310,7 +310,7 @@ def main():
             members = getGroupMembers(val)
             member_list_string = '\n'.join(members)
             # print(members)
-            window['-MEMBERLABEL-'].update(f'Group {val} members:')
+            window['-MEMBERLABEL-'].update(f'Group {val} Members:')
             window['-MEMBERLIST-'].update(member_list_string)
         if event == '-RANDOMBUTTON-' and selected:
             r = True
