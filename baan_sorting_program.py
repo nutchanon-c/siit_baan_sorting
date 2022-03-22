@@ -149,6 +149,7 @@ def insertToSorted(groupNo, baanNo):
     cursor.execute(command)
     db.commit()
 
+# code from https://stackoverflow.com/questions/4408714/execute-sql-file-with-python-mysqldb
 def exec_sql_file(cursor, sql_file):
     print ("\n[INFO] Executing SQL script file: '%s'" % (sql_file))
     statement = ""
@@ -167,6 +168,7 @@ def exec_sql_file(cursor, sql_file):
                 print ("[WARN] MySQLError during execute statement \n\tArgs: '%s'" % (str(e.args)))
 
             statement = ""
+
 def createDB():
     db = pymysql.connect(host=dbHostName,
                             user=dbUserName,
