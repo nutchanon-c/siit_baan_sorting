@@ -236,7 +236,8 @@ def main():
     except:
         sg.Popup('Database Error', 'Please check your database connection', icon=currentDir + '/icon.ico')
         exit()        
-    layout = [       
+    layout = [   
+            
         [
             
             [
