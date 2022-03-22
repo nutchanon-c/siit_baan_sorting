@@ -212,7 +212,7 @@ def main():
     try:
         checkDatabaseExistence()
     except:
-        sg.Popup('Database Error', 'Please check your database connection')
+        sg.Popup('Database Error', 'Please check your database connection', icon=currentDir + '/icon.ico')
         exit()     
     def resetWindow():
         window['-COMBO-'].update(values=getGroupNumbers())
@@ -228,7 +228,7 @@ def main():
     try:
         groupNumberList = getGroupNumbers()
     except:
-        sg.Popup('Database Error', 'Please check your database connection')
+        sg.Popup('Database Error', 'Please check your database connection', icon=currentDir + '/icon.ico')
         exit()        
     layout = [       
         [
