@@ -245,14 +245,14 @@ def main():
                 sg.Button('Update Data'),
             ], 
             [
-                sg.Text('', key='-UPDATEDATA-', size=(30,1),visible=True, justification='c', background_color="#ffe90a", text_color='black'),   
+                sg.Text('', key='-UPDATEDATA-', size=(30,1),visible=True, justification='c', background_color=colors['backgroundColor'], text_color='black'),   
             ]
         ],
         [
             [
                 [sg.Combo(values=groupNumberList, key='-COMBO-', default_value='Select Group', change_submits=True, readonly=True, size=(20,1))],
                 [sg.Text('Please select a group first', key='-MEMBERLABEL-', font=('Arial', 20), visible=True, text_color=colors['labelColor'], background_color=colors['backgroundColor'])],
-                [sg.Text('', key='-MEMBERLIST-', font=('Arial', 25), size=(25,4), justification='c', text_color=colors['memberListColor'], background_color="#ffe90a")],
+                [sg.Text('', key='-MEMBERLIST-', font=('Arial', 25), size=(25,4), justification='c', text_color=colors['memberListColor'], background_color=colors['backgroundColor'])],
             ]
         ],
         [
@@ -265,11 +265,11 @@ def main():
             sg.Button('OK', key='-RESULTOKBUTTON-', visible= False, size=(20, 2), button_color='#2583ff'),
         ],
         [
-            sg.Stretch(background_color="#ffe90a"),
+            sg.Stretch(background_color=colors['backgroundColor']),
             
         ],
         [
-            sg.Text('Made by Nutchanon Charnwutiwong',expand_x=True, justification='r', background_color="#ffe90a",text_color="#000000")
+            sg.Text('Made by Nutchanon Charnwutiwong',expand_x=True, justification='r', background_color=colors['backgroundColor'],text_color="#000000")
         ]
 
         
