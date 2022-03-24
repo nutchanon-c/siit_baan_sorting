@@ -224,6 +224,10 @@ def complementaryColor(my_hex):
     return ''.join(comp)
 
 
+def baan_selected(groupNo, baanNo):
+    pass
+
+
 def main():
     colors = {
         "backgroundColor" :backgroundColor,
@@ -337,7 +341,9 @@ def main():
             window['-RANDOMBUTTON-'].update(visible=False)
             window['-STOPRANDOMBUTTON-'].update(visible = True)
             window['-COMBO-'].update(disabled=True)
+
         if event == '-STOPRANDOMBUTTON-':
+            baan_selected(selected_group, num)
             window['-STOPRANDOMBUTTON-'].update(visible = False)
             window['-RANDOMBUTTON-'].update(visible=False)
             window['-RESULTOKBUTTON-'].update(visible=True)
