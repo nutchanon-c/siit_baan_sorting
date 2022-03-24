@@ -34,6 +34,9 @@ with open(currentDir + "/config.json", 'r', encoding="utf8") as f:
     sheetName = data['sheetName']
     textFileName = data['textFileName']
     serviceAccountFile = data['serviceAccount']
+    backgroundColor = data['backgroundColor']
+    textColor = data['textColor']
+    labelColor = data['labelColor']
 
 # textFileName = 'test1.txt'
 # worksheetName = 'รายชื่อกลุ่มน้องกิจกรรมเอสไอไทบ้าน'
@@ -211,9 +214,9 @@ def checkDatabaseExistence():
 
 def main():
     colors = {
-        "backgroundColor" :"#ffe90a",
-        "labelColor" : "#9907fe",
-        "memberListColor" : "#2583ff"
+        "backgroundColor" :backgroundColor,
+        "labelColor" : labelColor,
+        "memberListColor" : textColor
     }
  
     try:
