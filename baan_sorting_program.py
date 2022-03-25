@@ -32,19 +32,23 @@ elif __file__:
 currentDir = dir_path.replace('\\', '/')
 
 # read an extract data from config.json
-with open(currentDir + "/config.json", 'r', encoding="utf8") as f:
-    data = json.loads(f.read())
-    dbHostName = data['dbHostName']
-    dbUserName = data['dbUserName']
-    dbPassword = data['dbPassword']
-    dbName = data['dbName']
-    worksheetName = data['worksheetName']
-    sheetName = data['sheetName']
-    textFileName = data['textFileName']
-    serviceAccountFile = data['serviceAccount']
-    backgroundColor = data['backgroundColor']
-    textColor = data['textColor']
-    labelColor = data['labelColor']
+try:
+    with open(currentDir + "/config.json", 'r', encoding="utf8") as f:
+        data = json.loads(f.read())
+        dbHostName = data['dbHostName']
+        dbUserName = data['dbUserName']
+        dbPassword = data['dbPassword']
+        dbName = data['dbName']
+        worksheetName = data['worksheetName']
+        sheetName = data['sheetName']
+        textFileName = data['textFileName']
+        serviceAccountFile = data['serviceAccount']
+        backgroundColor = data['backgroundColor']
+        textColor = data['textColor']
+        labelColor = data['labelColor']
+except:
+    sg.Popup('Config file not found. Please create a config file.')
+    exit()
 
 # textFileName = 'test1.txt'
 # worksheetName = 'รายชื่อกลุ่มน้องกิจกรรมเอสไอไทบ้าน'
