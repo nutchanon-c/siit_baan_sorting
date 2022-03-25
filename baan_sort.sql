@@ -58,6 +58,7 @@ CREATE TABLE `student` (
   `drugAllergies` varchar(255) NOT NULL,
   `otherAllergies` varchar(255) NOT NULL,
   `congenitalDiseases` varchar(255) NOT NULL,
+  `size` varchar(255) NOT NULL,
   `emergency` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
