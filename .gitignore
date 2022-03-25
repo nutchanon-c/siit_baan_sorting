@@ -1,3 +1,7 @@
 # ignore service_account.json
 /service_account.json
 /query_log.txt
+/dist
+/build
+/__pycache__
+/baan_sorting_program.spec

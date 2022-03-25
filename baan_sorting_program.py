@@ -8,7 +8,7 @@ import pymysql
 import os
 import PySimpleGUI as sg
 import random
-
+import sys
 from pymysql import OperationalError
 from pymysql import ProgrammingError
 from setuptools import Command
@@ -23,6 +23,12 @@ from setuptools import Command
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+
+
+if getattr(sys, 'frozen', False):
+    dir_path = os.path.dirname(sys.executable)
+elif __file__:
+    dir_path = os.path.dirname(__file__)
 currentDir = dir_path.replace('\\', '/')
 
 # read an extract data from config.json
@@ -341,7 +347,7 @@ def random_baan(groupNo):
     
         baan_people[i] -= groupSize
         baan_boys[i] -= numBoys
-    print('choices: ', choices)
+    # print('choices: ', choices)
     return random.choice(choices)
 
 
