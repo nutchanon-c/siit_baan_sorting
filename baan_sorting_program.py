@@ -48,7 +48,7 @@ try:
         labelColor = data['labelColor']
 except:
     sg.Popup('Config file not found. Please create a config file.')
-    exit()
+    sys.exit()
 
 # textFileName = 'test1.txt'
 # worksheetName = 'รายชื่อกลุ่มน้องกิจกรรมเอสไอไทบ้าน'
@@ -377,7 +377,7 @@ def main():
         checkDatabaseExistence()
     except:
         sg.Popup('Database Error', 'Please check your database connection', icon=currentDir + '/icon.ico')
-        exit()     
+        sys.exit()     
     def resetWindow():
         window['-COMBO-'].update(values=getGroupNumbers())
         window['-MEMBERLABEL-'].update("Please select a group first")
@@ -393,7 +393,7 @@ def main():
         groupNumberList = getGroupNumbers()
     except:
         sg.Popup('Database Error', 'Please check your database connection', icon=currentDir + '/icon.ico')
-        exit()        
+        sys.exit()        
     layout = [   
             
         [
