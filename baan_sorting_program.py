@@ -54,10 +54,10 @@ with open(currentDir + "/config.json", 'r', encoding="utf8") as f:
 def updateData():
     # loads the text file
     try:
-        with open(currentDir + '/' + textFileName, 'r') as f:
+        with open(currentDir + '/' + textFileName, 'r', encoding="utf-8") as f:
             a = json.loads(f.read())
     except:
-        f = open(currentDir + '/' + textFileName, 'w')
+        f = open(currentDir + '/' + textFileName, 'w', encoding="utf-8")
         f.close()
         a = []
 
@@ -101,7 +101,7 @@ def updateData():
             db.commit()
             add_count += 1
             a.append(command + '\n') 
-    with open(currentDir + '/' + textFileName, 'a') as f:
+    with open(currentDir + '/' + textFileName, 'a', encoding="utf-8") as f:
         # f.write(json.dumps(a))
         for lines in a:
             f.write(lines)
