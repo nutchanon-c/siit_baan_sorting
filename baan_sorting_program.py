@@ -88,8 +88,11 @@ def updateData():
     x_cut = [r[1:] for r in x] # removing the id which is PK
 
 
-
-    sa = gspread.service_account(filename= currentDir + "/" + serviceAccountFile)
+    try:
+        sa = gspread.service_account(filename= currentDir + "/" + serviceAccountFile)
+    except:
+        sg.Popup('Service account file not found')
+        sys.exit()
     sh = sa.open(worksheetName)
 
     wks = sh.worksheet(sheetName)
