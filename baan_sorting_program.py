@@ -1,4 +1,6 @@
 
+from cmath import inf
+import math
 import re
 import gspread
 import json
@@ -99,7 +101,7 @@ def updateData():
             db.commit()
             add_count += 1
             a.append(command + '\n') 
-    with open(currentDir + '/' + textFileName, 'w') as f:
+    with open(currentDir + '/' + textFileName, 'a') as f:
         # f.write(json.dumps(a))
         for lines in a:
             f.write(lines)
@@ -225,10 +227,132 @@ def complementaryColor(my_hex):
 
 
 def baan_selected(groupNo, baanNo):
-    pass
+    db = pymysql.connect(host=dbHostName,
+                            user=dbUserName,
+                            password=dbPassword,
+                            db=dbName,
+                            charset='utf8mb4',
+                            cursorclass=pymysql.cursors.DictCursor)
+    cursor = db.cursor()
+
+    # add data to worksheet
+    sa = gspread.service_account(filename= currentDir + "/" + serviceAccountFile)
+    sh = sa.open(worksheetName)
+
+    wks = sh.worksheet(f'บ้าน {baanNo}')
+    g = wks.get_all_values()
+    g = g[1:]
+    # print('test sheet', g)
+    # print('sheet length', len(g))
+    
+    numRows = len(g) + 1 # offset from header
+
+    command = f"SELECT * FROM student WHERE groupNo = {groupNo};"
+    cursor.execute(command)
+    result = cursor.fetchall()
+    dataDict = [x for x in result]        
+    dataList = [list(a.values()) for a in dataDict]
+    dataListCut = [x[1:] for x in dataList] # remove PK
+    # print(dataListCut)
+    # update sheet A numRows+1 to M numRows + 1 + len(dataList)
+    wks.update(f'A{numRows+1}:M{numRows + 1 + len(dataList)}', dataListCut)
+    # wks.update('A6:B6', [[1,2]])
+    # print(len(dataList[0]))
+
+
+
+
+
+def random_baan(groupNo):
+    db = pymysql.connect(host=dbHostName,
+                            user=dbUserName,
+                            password=dbPassword,
+                            db=dbName,
+                            charset='utf8mb4',
+                            cursorclass=pymysql.cursors.DictCursor)
+    cursor = db.cursor()
+    command = f"SELECT COUNT(*) as size FROM student WHERE groupNo = {groupNo}"
+    cursor.execute(command)
+    result = cursor.fetchall()
+    groupSize = result[0]['size'] # group size
+    print('groupSize', groupSize)
+
+
+    command = f"SELECT COUNT(*) as boys FROM STUDENT WHERE groupNo = {groupNo} AND sex = 'Male';"
+    cursor.execute(command)
+    result = cursor.fetchall()
+    numBoys = result[0]['boys'] # number of boys in group
+    print('numBoys', numBoys)
+
+
+    stat = float('inf')
+    choices = []    
+
+    baan_people = {}
+    baan_boys = {}
+
+    for i in range(1, 12):
+        # get total amount of people
+        command = f"SELECT COUNT(*) totalPpl from student WHERE groupNo IN (SELECT groupNo from sorted_table WHERE baan = {i});"
+        cursor.execute(command)
+        result = cursor.fetchall()
+        baan_people[i] = result[0]['totalPpl']
+
+        # get total amount of boys
+        command = f"SELECT COUNT(*) as boysAmount from student WHERE groupNo IN (SELECT groupNo from sorted_table WHERE baan = {i}) AND sex = 'Male';"
+        cursor.execute(command)
+        result  = cursor.fetchall()
+        baan_boys[i] = result[0]['boysAmount']
+
+    for i in range(1, 12):
+        sdBoys = 0
+        sdPeople = 0
+        cvBoys = 0
+        cvPeople = 0
+
+        # calculate
+        baan_people[i] += groupSize
+        baan_boys[i] += numBoys
+
+
+        totalSortedBoys = sum(baan_boys.values())
+        totalSortedPeople = sum(baan_people.values())
+
+        avgBoys = totalSortedBoys / 11
+        avgPeople = totalSortedPeople / 11
+
+        sdBoys = math.sqrt((sum([x**2 for x in baan_boys.values()]) / 11) - (avgBoys**2))
+        sdPeople = math.sqrt((sum([x**2 for x in baan_people.values()]) / 11) - (avgPeople**2))
+
+
+        if avgBoys == 0:
+            cvBoys = 0
+        else:
+            cvBoys = sdBoys / avgBoys
+        cvPeople = sdPeople / avgPeople
+
+        indicator = (2 * cvBoys) + cvPeople
+        if indicator < stat:
+            stat = indicator
+            choices = [i]
+        elif indicator == stat:
+            choices.append(i)
+    
+        baan_people[i] -= groupSize
+        baan_boys[i] -= numBoys
+    print('choices: ', choices)
+    return random.choice(choices)
+
+
+
+
+
+
 
 
 def main():
+    num = 0
+    res = -1
     colors = {
         "backgroundColor" :backgroundColor,
         "labelColor" : labelColor,
@@ -338,21 +462,23 @@ def main():
             window['-MEMBERLIST-'].update(member_list_string)
         if event == '-RANDOMBUTTON-' and selected:
             r = True
+            res = random_baan(selected_group)
             window['-RANDOMBUTTON-'].update(visible=False)
             window['-STOPRANDOMBUTTON-'].update(visible = True)
             window['-COMBO-'].update(disabled=True)
 
         if event == '-STOPRANDOMBUTTON-':
-            baan_selected(selected_group, num)
+            r = False
+            num = res
+            window['-RANDOMNUMBER-'].update(num)            
             window['-STOPRANDOMBUTTON-'].update(visible = False)
             window['-RANDOMBUTTON-'].update(visible=False)
-            window['-RESULTOKBUTTON-'].update(visible=True)
-            
-            insertToSorted(selected_group, num)
-
+            window['-RESULTOKBUTTON-'].update(visible=True)    
             selected = False
-            r = False
+            
         if event == '-RESULTOKBUTTON-':
+            insertToSorted(selected_group, res)
+            baan_selected(selected_group, res)
             resetWindow()
             window['-COMBO-'].update(disabled=False)
             selected = False
