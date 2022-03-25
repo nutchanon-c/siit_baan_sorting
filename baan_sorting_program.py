@@ -90,13 +90,14 @@ def updateData():
     g = g[1:]
     for record in g:
         record[0] = int(record[0])
+            
 
 
     add_count = 0
     for record in g:
         if record not in x_cut:
             s = ','.join(["'" + str(x) + "'" for x in record])
-            command = "INSERT INTO student (groupNo, fullName, nickName, sex, line_id, phone, bloodType, foodAllergies, dietRestrictions, drugAllergies, otherAllergies, congenitalDiseases, emergency) VALUES(" + s + ")" 
+            command = "INSERT INTO student (groupNo, fullName, nickName, sex, line_id, phone, bloodType, foodAllergies, dietRestrictions, drugAllergies, otherAllergies, congenitalDiseases, size,emergency) VALUES(" + s + ")" 
             cursor.execute(command)
             db.commit()
             add_count += 1
@@ -255,7 +256,7 @@ def baan_selected(groupNo, baanNo):
     dataListCut = [x[1:] for x in dataList] # remove PK
     # print(dataListCut)
     # update sheet A numRows+1 to M numRows + 1 + len(dataList)
-    wks.update(f'A{numRows+1}:M{numRows + 1 + len(dataList)}', dataListCut)
+    wks.update(f'A{numRows+1}:N{numRows + 1 + len(dataList)}', dataListCut)
     # wks.update('A6:B6', [[1,2]])
     # print(len(dataList[0]))
 
@@ -399,7 +400,7 @@ def main():
             ]
         ],
         [
-            sg.Text(text='', key='-RANDOMNUMBER-', font=('Arial', 40), background_color=colors['backgroundColor'], size=(5,1), justification='c', text_color='#fe00ff'),
+            sg.Text(text='', key='-RANDOMNUMBER-', font=('Arial', 100), background_color=colors['backgroundColor'], size=(5,1), justification='c', text_color='#fe00ff'),
         ],
         [
             
@@ -432,7 +433,7 @@ def main():
         #     if a == 3:
         #         r = False
                 
-        event, values = window.read(timeout=100)
+        event, values = window.read(timeout=50)
         # continuous random number
         if event == 'Update Data':
             rec = updateData()
