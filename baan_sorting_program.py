@@ -109,7 +109,8 @@ def updateData():
     add_count = 0
     for record in g:
         if record not in x_cut:
-            s = ','.join(["'" + str(x) + "'" for x in record])
+            s = ','.join(["'" + str(x).replace("'", "''") + "'" for x in record])
+            print(s)
             command = "INSERT INTO student (groupNo, fullName, nickName, sex, line_id, phone, bloodType, foodAllergies, dietRestrictions, drugAllergies, otherAllergies, congenitalDiseases, size,emergency) VALUES(" + s + ")" 
             cursor.execute(command)
             db.commit()
