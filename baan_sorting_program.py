@@ -360,8 +360,28 @@ def random_baan(groupNo):
 
 
 
-
-
+def getBaanMembers():
+    db = pymysql.connect(host=dbHostName,
+                            user=dbUserName,
+                            password=dbPassword,
+                            db=dbName,
+                            charset='utf8mb4',
+                            cursorclass=pymysql.cursors.DictCursor)
+    cursor = db.cursor()
+    memberStat = {}
+    for i in range(1, 12):
+        command = f"SELECT COUNT(*) totalPpl from student WHERE groupNo IN (SELECT groupNo from sorted_table WHERE baan = {i});"
+        cursor.execute(command)
+        result = cursor.fetchall()
+        memberStat[i] = result[0]['totalPpl']
+    # sa = gspread.service_account(filename= currentDir + "/" + serviceAccountFile)
+    # sh = sa.open(worksheetName)
+    # memberStat = {}
+    # for i in range(1,12):
+    #     wks = sh.worksheet(f'บ้าน {i}')
+    #     g = wks.get_all_values()
+    #     memberStat[i] = len(g) - 1
+    return memberStat
 
 
 
@@ -401,6 +421,7 @@ def main():
             
             [
                 sg.Button('Update Data'),
+                sg.Button('Member amount'),
             ], 
             [
                 sg.Text('', key='-UPDATEDATA-', size=(30,1),visible=True, justification='c', background_color=colors['backgroundColor'], text_color='black'),   
@@ -448,7 +469,13 @@ def main():
         #         r = False
                 
         event, values = window.read(timeout=50)
-        # continuous random number
+        if event == 'Member amount':
+            allAmount = getBaanMembers()
+            # format allAmount into string and lines
+            allAmountStr = ''
+            for i in allAmount:
+                allAmountStr += f'บ้าน {i} : {allAmount[i]} คน\n'
+            sg.Popup('Member amount', allAmountStr, icon=currentDir + '/icon.ico')
         if event == 'Update Data':
             rec = updateData()
             if rec == 0:
