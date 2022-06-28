@@ -1,15 +1,13 @@
-   
 {
-    "dbHostName" : "localhost",
-    "dbUserName" : "root",
-    "dbPassword" : "",
-    "dbName" : "siit_baan_sort_2022",
-    "textFileName" : "query_log.txt",
-    "worksheetName" : "รายชื่อกลุ่มน้องกิจกรรมเอสไอไทบ้าน",
-    "sheetName" : "Main",
-    "serviceAccount" : "service_account.json",
-    "backgroundColor" : "#ffe90a",
-    "textColor" : "#2583ff",
-    "labelColor" : "#9907fe"
-
+  "dbHostName": "localhost",
+  "dbUserName": "root",
+  "dbPassword": "",
+  "dbName": "siit_baan_sort_2022",
+  "textFileName": "query_log.txt",
+  "worksheetName": "รายชื่อกลุ่มน้องกิจกรรมเอสไอไทบ้าน",
+  "sheetName": "Main",
+  "serviceAccount": "service_account.json",
+  "backgroundColor": "#ffe90a",
+  "textColor": "#2583ff",
+  "labelColor": "#9907fe"
 }
